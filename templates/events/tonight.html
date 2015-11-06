@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Tonight - {{block.super }}{% endblock %}
+{% block main_content %} 
+	<a href="{% url 'ev_create' %}">Create an Event</a>
+	{% if events %}
+		{% for event, attending in events %}
+			<p>{{ event.creator.username }}: {{event.description}} </p>
+			{% if attending %}
+				<p> You are attending this event. </p>
+			{% else %}
+				<p> You are not attending this event </p>
+			{% endfor %}
+		{% endfor %}
+	{% else %}
+		<p> No events for today. </p>
+	{% endif %}
+{% endblock %}
