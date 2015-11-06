@@ -3,11 +3,11 @@ from socialgraph.models import UserLink
 
 def get_people_user_follows(user):
 	ul = UserLink.objects.filter(from_user=user).values('to_user')
-	return User.objects.filter(id__in=[i['to_user'] for i in ul]])
+	return User.objects.filter(id__in=[i['to_user'] for i in ul])
 
 def get_people_following_user(user):
 	ul = UserLink.objects.filter(to_user=user).values('from_user')
-	return User.objects.filter(id__in=[i['from_user'] for i in ul]])
+	return User.objects.filter(id__in=[i['from_user'] for i in ul])
 def get_mutual_followers(user):
 	follows = UserLink.objects.filter(from_user=user).values('to_user')
 	following = UserLink.objects.filter(to_user=user).values('from_user')
