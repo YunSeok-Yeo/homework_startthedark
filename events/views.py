@@ -4,29 +4,20 @@ from django.template import RequestContext
 from events.forms import EventForm
 from dateutil.parser import parse
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, Http404
+from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
 
 def tonight(request):
 	events = Event.objects.today().filter(latest=True)
-	attending = []
-	for event in events:
-		try:
-			Attendance.objects.get(event=event, user=request.user)
-			attending.append(True)
-		except Attendance.DoesNotExist:
-			attending.append(False)
-
 	context = {
-		'events': zip(events, attending),
+		'events': events,
 	}
 	return render_to_response(
-		'events/tonight.html',
-		context,
-		context_instance = RequestContext(request),
-	)
+                'events/tonight.html',
+                RequestContext(request, context),
+        )
 @login_required
 def create(request):
 	form = EventForm(request.POST or None)
@@ -51,8 +42,7 @@ def create(request):
 		return HttpResponseRedirect(next)
 	return render_to_response(
 		'events/create.html',
-		{'form':form},
-		context_instance = RequestContext(request)
+		RequestContext(request, {'form':form})
 	)
 create = login_required(create)
 
@@ -80,3 +70,14 @@ def toggle_attendance(request):
 
 
 toggle_attendance = login_required(toggle_attendance)
+
+
+def archive(request):
+        events = Event.objects.filter(latest=True)
+        context = {
+                'events': events,
+        }
+        return render_to_response(
+                'events/archive.html',
+                RequestContext(request, context),
+        )
